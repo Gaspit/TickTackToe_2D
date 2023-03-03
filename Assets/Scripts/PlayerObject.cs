@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerObject : MonoBehaviour
 {
@@ -9,23 +9,22 @@ public class PlayerObject : MonoBehaviour
     private static float SPEED = 6.0f;
     private Vector3 _target;
 
-    public void StartMove(Vector3 vector, bool shouldWait)
+    public void StartMove(Vector3 vector, float delay = 0.0f, Action onMoveCompleteCallback = null)
     {
         _target = vector;
-        StartCoroutine(Move(shouldWait));
+        StartCoroutine(Move(delay, onMoveCompleteCallback));
     }
 
-    private IEnumerator Move(bool shouldWait)
+    private IEnumerator Move(float delay, Action onMoveCompleteCallback = null)
     {
-        if (shouldWait)
-        {
-            yield return new WaitForSeconds(0.75f);
-        }
-    
+        yield return new WaitForSeconds(delay);
+        
         while (_playerObj.position != _target)
         {
             _playerObj.position = Vector3.MoveTowards(_playerObj.position, _target, Time.deltaTime * SPEED);
             yield return null;
         }
+
+        onMoveCompleteCallback?.Invoke();
     }
 }

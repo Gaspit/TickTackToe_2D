@@ -22,6 +22,8 @@ public class Main : MonoBehaviour
     private bool _endGame;
     private int _crossCounter = 5;
     private bool _isMenuWindowActive = false;
+    private bool _isMoveAllowed = true;
+
     private int[][] _winPositions =
     {
         new[] { 0, 1, 2 }, // Horizontal012
@@ -31,7 +33,19 @@ public class Main : MonoBehaviour
         new[] { 1, 4, 7 }, // Vertical147
         new[] { 2, 5, 8 }, // Vertical258
         new[] { 0, 4, 8 }, // Diagonal048
-        new[] { 2, 4, 6 }  // Diagonal246
+        new[] { 2, 4, 6 } // Diagonal246
+    };
+
+    private string[] _animations =
+    {
+        "Horizontal012",
+        "Horizontal345",
+        "Horizontal678",
+        "Vertical036",
+        "Vertical147",
+        "Vertical258",
+        "Diagonal048",
+        "Diagonal246"
     };
 
     [SerializeField] private Collider[] _col;
@@ -48,18 +62,6 @@ public class Main : MonoBehaviour
     [SerializeField] private Button _menuGameBtn;
     [SerializeField] private Button _exitBtn;
 
-    private enum Animations
-    {
-        Horizontal012, 
-        Horizontal345, 
-        Horizontal678, 
-        Vertical036,
-        Vertical147,
-        Vertical258,
-        Diagonal048,
-        Diagonal246 
-    }
-    
     private void Start()
     {
         _restartGameBtn.onClick.AddListener(Restart);
@@ -103,7 +105,7 @@ public class Main : MonoBehaviour
                     _cell[winPosition[1]] == player &&
                     _cell[winPosition[2]] == player)
                 {
-                    ShowEndGameMessage(player == PLAYER_X, (Animations)Array.IndexOf(_winPositions, winPosition));
+                    ShowEndGameMessage(player == PLAYER_X, Array.IndexOf(_winPositions, winPosition));
                     gameEnded = true;
                     break;
                 }
@@ -121,7 +123,7 @@ public class Main : MonoBehaviour
         }
     }
 
-    private void ShowEndGameMessage(bool win, Animations anim)
+    private void ShowEndGameMessage(bool win, int anim)
     {
         EndGame(anim);
         if (win)
@@ -133,20 +135,20 @@ public class Main : MonoBehaviour
             _loseText.SetActive(true);
         }
     }
-    
+
     private void Draw()
     {
         _endGame = true;
         _textDraw.SetActive(true);
         _restartBtnObj.SetActive(true);
     }
-    
-    private void EndGame(Animations anim)
+
+    private void EndGame(int animIndex)
     {
         _endGame = true;
         _restartBtnObj.SetActive(true);
         _resultObj.gameObject.SetActive(true);
-        _resultAnimator.SetInteger("Anim",(int) anim );
+        _resultAnimator.SetTrigger(_animations[animIndex]);
         foreach (var c in _col)
         {
             c.enabled = false;
@@ -155,12 +157,18 @@ public class Main : MonoBehaviour
 
     public void SetCross(int id)
     {
+        if (!_isMoveAllowed)
+        {
+            return;
+        }
+        
         _col[id].enabled = false;
-        _crossPlayer[_crossNumber].StartMove(_pointsOnField[id].position, false);
+        _crossPlayer[_crossNumber].StartMove(_pointsOnField[id].position);
         _crossNumber++;
         _cell[id] = 1;
         _crossCounter--;
         CheckWinPosition();
+        
         if (!_endGame)
         {
             SetCircle();
@@ -169,12 +177,18 @@ public class Main : MonoBehaviour
 
     private void SetCircle()
     {
+        _isMoveAllowed = false;
         int id = FindPosition();
         _col[id].enabled = false;
-        _circlePlayer[_circleNumber].StartMove(_pointsOnField[id].position, true);
+        _circlePlayer[_circleNumber].StartMove(_pointsOnField[id].position, 0.75f, SetAllowMove);
         _circleNumber++;
         _cell[id] = 2;
         CheckWinPosition();
+    }
+
+    private void SetAllowMove()
+    {
+        _isMoveAllowed = true;
     }
 
     private int FindPosition()
