@@ -12,7 +12,6 @@ public class Main : MonoBehaviour
     private const float DECREASE_CORD_Z = 0.8f;
     private const float DEFAULT_POS_X = 3.0f;
     private readonly Quaternion ROTATION_OBJ = Quaternion.Euler(-90, 0, 0);
-
     private readonly PlayerObject[] _circlePlayer = new PlayerObject[5];
     private readonly PlayerObject[] _crossPlayer = new PlayerObject[5];
     private readonly Transform[] _pointsOnField = new Transform[9];
@@ -21,7 +20,7 @@ public class Main : MonoBehaviour
     private int[] _cell = new int[9];
     private bool _endGame;
     private int _crossCounter = 5;
-    private bool _isMenuWindowActive = false;
+    private bool _isMenuWindowActive;
     private bool _isMoveAllowed = true;
 
     private int[][] _winPositions =
@@ -36,7 +35,7 @@ public class Main : MonoBehaviour
         new[] { 2, 4, 6 } // Diagonal246
     };
 
-    private string[] _animations =
+    private string[] _animTriggers =
     {
         "Horizontal012",
         "Horizontal345",
@@ -55,7 +54,7 @@ public class Main : MonoBehaviour
     [SerializeField] private Animator _resultAnimator;
     [SerializeField] private GameObject _winText;
     [SerializeField] private GameObject _loseText;
-    [SerializeField] private GameObject _textDraw;
+    [SerializeField] private GameObject _drawText;
     [SerializeField] private GameObject _restartBtnObj;
     [SerializeField] private GameObject _menuWindow;
     [SerializeField] private Button _restartGameBtn;
@@ -88,7 +87,7 @@ public class Main : MonoBehaviour
         _menuWindow.SetActive(_isMenuWindowActive);
     }
 
-    private void Restart() => SceneManager.LoadScene("SampleScene");
+    private void Restart() => SceneManager.LoadScene("GameScene");
 
     private void Quit() => Application.Quit();
 
@@ -139,7 +138,7 @@ public class Main : MonoBehaviour
     private void Draw()
     {
         _endGame = true;
-        _textDraw.SetActive(true);
+        _drawText.SetActive(true);
         _restartBtnObj.SetActive(true);
     }
 
@@ -148,7 +147,7 @@ public class Main : MonoBehaviour
         _endGame = true;
         _restartBtnObj.SetActive(true);
         _resultObj.gameObject.SetActive(true);
-        _resultAnimator.SetTrigger(_animations[animIndex]);
+        _resultAnimator.SetTrigger(_animTriggers[animIndex]);
         foreach (var c in _col)
         {
             c.enabled = false;

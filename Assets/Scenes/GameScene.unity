@@ -2206,7 +2206,7 @@ MonoBehaviour:
   _resultAnimator: {fileID: 763006357}
   _winText: {fileID: 225326762}
   _loseText: {fileID: 1049572895}
-  _textDraw: {fileID: 1144991306}
+  _drawText: {fileID: 1144991306}
   _restartBtnObj: {fileID: 1985119975}
   _menuWindow: {fileID: 1619886622}
   _restartGameBtn: {fileID: 1985119977}
