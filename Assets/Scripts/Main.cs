@@ -182,12 +182,12 @@ public class Main : MonoBehaviour
         _circlePlayer[_circleNumber].StartMove(_pointsOnField[id].position, 0.75f, SetAllowMove);
         _circleNumber++;
         _cell[id] = 2;
-        CheckWinPosition();
     }
 
     private void SetAllowMove()
     {
         _isMoveAllowed = true;
+        CheckWinPosition();
     }
 
     private int FindPosition()
