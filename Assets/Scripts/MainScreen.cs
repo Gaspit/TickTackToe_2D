@@ -8,5 +8,5 @@ public class MainScreen : MonoBehaviour
 
     private void Start() => _startGameBtn.onClick.AddListener(StartGame);
 
-    private void StartGame() => SceneManager.LoadScene("GameScene");
+    private void StartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 }

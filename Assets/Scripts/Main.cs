@@ -87,7 +87,7 @@ public class Main : MonoBehaviour
         _menuWindow.SetActive(_isMenuWindowActive);
     }
 
-    private void Restart() => SceneManager.LoadScene("GameScene");
+    private void Restart() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
     private void Quit() => Application.Quit();
 
